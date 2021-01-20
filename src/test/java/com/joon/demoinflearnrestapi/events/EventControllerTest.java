@@ -35,7 +35,7 @@ public class EventControllerTest {
 
     @Test
     public void createEvent() throws Exception {
-        Event event = Event.builder()
+        EventDto eventDto = EventDto.builder()
                 .name("Spring")
                 .description("Rest API Develoment with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 23, 14, 21))
@@ -51,7 +51,7 @@ public class EventControllerTest {
         mvc.perform(post("/api/events/")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)  //입력 기대 형태
                         .accept(MediaTypes.HAL_JSON)
-                        .content(objectMapper.writeValueAsBytes(event)))  //출력 기대형태
+                        .content(objectMapper.writeValueAsBytes(eventDto)))  //출력 기대형태
                 .andDo(print())
                 .andExpect(status().isCreated())//201 테스트
                 .andExpect(jsonPath("id").exists()) // json에 id 가 있는지 확인
@@ -61,7 +61,30 @@ public class EventControllerTest {
                 .andExpect(jsonPath("free").value(Matchers.not(true)))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
+    @Test
+    public void createEvent_Bad_Request() throws Exception {
+        Event event = Event.builder()
+                .name("Spring")
+                .description("Rest API Develoment with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 23, 14, 21))
+                .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
+                .beginEventDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
+                .endEventDateTime(LocalDateTime.of(2018, 11, 25, 14, 21))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타텁 팩토리")
+                .build();
 
+        mvc.perform(post("/api/events/")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)  //입력 기대 형태
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsBytes(event)))  //출력 기대형태
+                .andDo(print())
+                .andExpect(status().isBadRequest())//201 테스트
+
+        ;
+    }
 }
 
 

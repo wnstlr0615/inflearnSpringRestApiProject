@@ -90,7 +90,13 @@ modelMapper 라이브러리 사용
 @SpringBootTest에 경우 디비를 사용하여 실제로 테스트 함
 
  .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+---------------------------------------------------------------------------------------------
+13. Event 생성 API 구현: 입력값 이외에 에러 발생
 
+application.properties 추가
+spring.jackson.deserialization.fail-on-unknown-properties=true  // 객체 변환 시 객체 변수명 말고 다른 것이 있을 경우 에러 처리
+
+ Bad_Request() 테스트 추가
 
 
 
