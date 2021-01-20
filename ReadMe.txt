@@ -69,4 +69,28 @@ EventControllerTest 클래스
  .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE)); // CONTENT_TYPE에 HAL JSON인지 확인
  HttpHeaders 클래스에 Header 값 상수로 저장되어 있음
 
+---------------------------------------------------------------------------------------------
+12. Event 생성 API 구현: 입력값 제한하기
+EventDto 생성
+
+DemoInflearnRestApiApplication 클래스
+@Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
+    }
+모델 메퍼를 사용하기 위해 빈으로 등록
+EventController 클래스
+modelMapper 라이브러리 사용
+  Event event=modelMapper.map(eventDto,Event.class); //DTO를 클래스로 매칭 시켜준다.
+
+슬라이스 테스트인 @WebMvcTest 에서 전체 테스트인 @SpringBootTest 로 변경
+@SpringBootTest에 경우 MockMvc를 등록 안해주므로 @AutoConfigureMockMvc 어노테이션도 추가
+목객체 제거
+@WebMVcTest에 경우 가짜객체를 사용하여 디비를 사용하지 않지만
+@SpringBootTest에 경우 디비를 사용하여 실제로 테스트 함
+
+ .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+
+
+
 
