@@ -1,16 +1,13 @@
 package com.joon.demoinflearnrestapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joon.demoinflearnrestapi.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Headers;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,10 +31,11 @@ public class EventControllerTest {
     ObjectMapper objectMapper;
 
     @Test
+    @TestDescription("정상적인 입력 테스트")
     public void createEvent() throws Exception {
         EventDto eventDto = EventDto.builder()
                 .name("Spring")
-                .description("Rest API Develoment with Spring")
+                .description("Rest API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 23, 14, 21))
                 .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
                 .beginEventDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
@@ -62,10 +60,11 @@ public class EventControllerTest {
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
     @Test
+    @TestDescription("Event 타입으로 입력될 경우 실패 테스트")
     public void createEvent_Bad_Request() throws Exception {
         Event event = Event.builder()
                 .name("Spring")
-                .description("Rest API Develoment with Spring")
+                .description("Rest API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 23, 14, 21))
                 .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
                 .beginEventDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
@@ -86,6 +85,7 @@ public class EventControllerTest {
         ;
     }
     @Test
+    @TestDescription("빈 객체 입력시 에러 발생 테스트")
     public void createEvent_Bad_Request_Empty_Input() throws Exception {
         EventDto eventDto=EventDto.builder().build();
         mvc.perform(post("/api/events")
@@ -95,10 +95,11 @@ public class EventControllerTest {
         ;
     }
     @Test
+    @TestDescription("입력 값이 잘못된 경우 에러 발생 테스트")
     public void createEvent_Bad_Request_Wrong_Input() throws Exception {
         EventDto eventDto=EventDto.builder()
                 .name("Spring")
-                .description("Rest API Develoment with Spring")
+                .description("Rest API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 25, 14, 21))
                 .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
                 .beginEventDateTime(LocalDateTime.of(2018, 11, 26, 14, 21))

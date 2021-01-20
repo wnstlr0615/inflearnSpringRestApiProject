@@ -98,5 +98,51 @@ spring.jackson.deserialization.fail-on-unknown-properties=true  // 객체 변환
 
  Bad_Request() 테스트 추가
 
+---------------------------------------------------------------------------------------------
+14. Event 생성 API 구현: Bad Request 처리하기
+EventDto 생성을 통하여 잘못된 값 입력 방지(기존 Event 객체를 그대로 사용하여 필요 없는 값도 입력 될 수 있었음)
+createEvent_Bad_Request_Empty_Input() // @Valid 를 사용하여  빈객체 입력시 에러 처리
 
+EventDto 클래스
+    @NotEmpty //String 타입
+    @NotNull // 다른 타입
+    @Min(0) //int 형 최소 값 0으로 설정
+
+EventController 클래스
+ public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors)  //DTO 클래스사용과 @Valid Errors 사용
+    eventValidator.validate(eventDto, errors);  //내부 로직 검사 추가
+ ※@Valid 에 경우 스프링 부트 2.3부터 제외 되어 새롭게 추가해 주어야 함
+ <dependency>
+             <groupId>javax.validation</groupId>
+             <artifactId>validation-api</artifactId>
+ </dependency>
+ ※Errors 클래스에서 error을 검출 못하는 경우 validation 의존성 추가해 주어야 함
+  <dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-validation</artifactId>
+ </dependency>
+
+
+ EventValidator 클래스 를 등록 하여 내부 값 에러 검출
+ @Component 등록 하여 빈으로 관리
+
+   if(eventDto.getBasePrice()>eventDto.getMaxPrice() && eventDto.getMaxPrice()!=0){
+             errors.rejectValue("basePrice", "wrongValue", "BasePrice is wrong.");
+             errors.rejectValue("maxPrice", "wrongValue", "maxPrice is wrong.");
+         }
+
+EventControllerTests 클래스
+public void createEvent_Bad_Request()  // 입력 DTO 를 제외한 다른 입력이 들어 오는 경우
+public void createEvent_Bad_Request_Empty_Input() //빈 DTO 가 들어 오는 경우
+public void createEvent_Bad_Request_Wrong_Input() //잘못된 값이 들어오는경우
+테스트 3개 추가
+
+ @TestDescription() 을 추가하여 테스트 설명
+
+@TestDescription 어노테이션 생성
+ @Target(ElementType.METHOD) //설정
+ @Retention(RetentionPolicy.SOURCE) //유지시간
+ public @interface TestDescription {
+     String value();
+ }
 
