@@ -2,12 +2,16 @@ package com.joon.demoinflearnrestapi.events;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Builder @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter @EqualsAndHashCode(of="id") //값 비교시 id hash 값 사용
+@Entity
 // @Data 사용시 @EqualsAndHashCode 에서 모든 프로퍼티를 자동 사용하므로 문제 생길 수도 있음
 public class Event {
+    @Id
+    @GeneratedValue
     private Integer id;
     private String name;    //이벤트 이름
     private String description;     //이벤트 설명
@@ -21,6 +25,7 @@ public class Event {
     private int limitOfEnrollment; //인원제한
     private boolean offline;
     private boolean free;
+    @Enumerated(EnumType.STRING) // 기본 값 EnumType.ORDINAL(숫자로 저장)
     private EventStatus eventStatus;
 
 
