@@ -9,16 +9,16 @@ import java.time.LocalDateTime;
 // @Data 사용시 @EqualsAndHashCode 에서 모든 프로퍼티를 자동 사용하므로 문제 생길 수도 있음
 public class Event {
     private Integer id;
-    private String name;
-    private String description;
-    private LocalDateTime beginEnrollmentDateTime;
-    private LocalDateTime closeEnrollmentDateTime;
-    private LocalDateTime beginEventDateTime;
-    private LocalDateTime endEventDateTime;
-    private String location;
+    private String name;    //이벤트 이름
+    private String description;     //이벤트 설명
+    private LocalDateTime beginEnrollmentDateTime; //시작일
+    private LocalDateTime closeEnrollmentDateTime; // 종료일
+    private LocalDateTime beginEventDateTime; //이벤트 시작일
+    private LocalDateTime endEventDateTime;  //이벤트 종료일
+    private String location; // 모임 장소 없을 경우 온라인
     private int basePrice;
     private int maxPrice;
-    private int asePrice;
+    private int limitOfEnrollment; //인원제한
     private boolean offline;
     private boolean free;
     private EventStatus eventStatus;

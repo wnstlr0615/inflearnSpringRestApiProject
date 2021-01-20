@@ -2,7 +2,6 @@ package com.joon.demoinflearnrestapi.events;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class EventTest {
