@@ -31,12 +31,12 @@ public class EventController {
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors){
         if(errors.hasErrors()){//어노테이션 validation 검사
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(errors);
         }
         eventValidator.validate(eventDto, errors);  //내부 로직 검사
 
         if(errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(errors);
         }
         Event event=modelMapper.map(eventDto,Event.class);
         Event newEvent=eventRepository.save(event);

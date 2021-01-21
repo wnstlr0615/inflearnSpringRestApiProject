@@ -109,10 +109,15 @@ public class EventControllerTest {
                 .limitOfEnrollment(100)
                 .location("강남역 D2 스타텁 팩토리")
                 .build();
+
         mvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(eventDto)))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
         ;
     }
 }

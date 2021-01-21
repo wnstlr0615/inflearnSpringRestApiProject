@@ -145,4 +145,28 @@ public void createEvent_Bad_Request_Wrong_Input() //잘못된 값이 들어오�
  public @interface TestDescription {
      String value();
  }
+ ---------------------------------------------------------------------------------------------
+15. Event 생성 API 구현: Bad Request 응답 본문 만들기
+
+ @TestDescription("입력 값이 잘못된 경우 에러 발생 테스트")
+    public void createEvent_Bad_Request_Wrong_Input(){}
+
+   다음 메소드에서  잘못된 요청으로 인한 에러 발생 시 에러에 대한 응답 만들기  과정
+
+.andExpect(jsonPath("$[0].objectName").exists())
+.andExpect(jsonPath("$[0].defaultMessage").exists())
+.andExpect(jsonPath("$[0].code").exists())
+에러 응답에 다음과 같은 변수가 있는지 확인
+
+EventController 클래스
+  if(errors.hasErrors()){  //에러 발생시 에러 클래스를 body에 넣어서 반환
+             return ResponseEntity.badRequest().body(errors);
+ }
+
+ errors 클래스는 자동으로 json으로 변환 해주지 않기 때문에 변환 클래스 생성해야 함
+
+ @JsonComponent    //Json 관련 빈으로 관리
+ public  class ErrorSerializer extends JsonSerializer<Errors>   // JsonSerializer 상속 받아 구현
+ 변환 과정 구현
+  ---------------------------------------------------------------------------------------------
 
