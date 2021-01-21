@@ -29,17 +29,8 @@ public class Event {
     private EventStatus eventStatus=EventStatus.DRAFT;
 
     public void update(){
-        if(basePrice==0 && maxPrice==0){
-            free=true;
-        }else {
-            free=false;
-        }
-        if(location.isBlank() || location==null){
-            offline=false;
-        }
-        else{
-            offline=true;
-        }
+        free= basePrice == 0 && maxPrice == 0;
+        offline= !location.isBlank() && location != null;
     }
 
 }

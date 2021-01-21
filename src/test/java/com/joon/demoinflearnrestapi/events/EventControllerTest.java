@@ -30,7 +30,9 @@ public class EventControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Testthrows Exception {
+    @Test
+    @TestDescription("정상적인 입력 테스트")
+    public void createEvent() throws Exception {
         EventDto eventDto = EventDto.builder()
                 .name("Spring")
                 .description("Rest API Development with Spring")

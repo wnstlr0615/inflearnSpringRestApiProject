@@ -176,7 +176,31 @@ EventTest 클래스에 testFree() ,testOffline() 테스트 메소드 추가
 EventControllerTests 클래스
 @TestDescription("정상적인 입력 테스트")
 public void createEvent(){} 메소드에 offline, free 검사 코드 추가
-
   ---------------------------------------------------------------------------------------------
+17. Event 생성 API 구현: 매개변수를 이용한 테스트
+    반복된 테스트 코드를 줄이기 위해서 JUnitParams 라이브러리 사용
+    EventTests 클래스
+    @RunWith(JUnitParamsRunner.class)  //어노테이션 추가
+
+    @Parameters
+    test() -> testFree(int basePrice, int maxPrice, boolean isFree)  로변경
+
+    private  Object[] parametersForTestFree(){    //parametersFor 로 시작하면 Params에서 찾아서 입력
+            return new Object[]{
+                    new Object[]{0,0,true},
+                    new Object[]{100,0,false},
+                    new Object[]{0,100,false},
+                    new Object[]{100,200,false}
+            };
+        }
+        다음과 같은 메소드 생성 하여 testFree 메소드에 주입 또는
+            @Parameters({
+            "0,0,true",
+            "100,0,false"
+            })
+            다음과 같은 방법 사용
+
+    testOffline 메소드와 이와 같음
+      ---------------------------------------------------------------------------------------------
 
 
