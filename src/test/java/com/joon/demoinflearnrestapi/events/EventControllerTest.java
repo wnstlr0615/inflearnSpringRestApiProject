@@ -30,9 +30,7 @@ public class EventControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Test
-    @TestDescription("정상적인 입력 테스트")
-    public void createEvent() throws Exception {
+    @Testthrows Exception {
         EventDto eventDto = EventDto.builder()
                 .name("Spring")
                 .description("Rest API Development with Spring")
@@ -55,8 +53,8 @@ public class EventControllerTest {
                 .andExpect(jsonPath("id").exists()) // json에 id 가 있는지 확인
                 .andExpect(header().exists(HttpHeaders.LOCATION))   //header에 LOCATION이 있는지 확인
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE)) // CONTENT_TYPE에 HAL JSON인지 확인
-                .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
     @Test

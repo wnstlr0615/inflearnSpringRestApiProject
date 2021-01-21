@@ -28,5 +28,18 @@ public class Event {
     @Enumerated(EnumType.STRING) // 기본 값 EnumType.ORDINAL(숫자로 저장)
     private EventStatus eventStatus=EventStatus.DRAFT;
 
+    public void update(){
+        if(basePrice==0 && maxPrice==0){
+            free=true;
+        }else {
+            free=false;
+        }
+        if(location.isBlank() || location==null){
+            offline=false;
+        }
+        else{
+            offline=true;
+        }
+    }
 
 }

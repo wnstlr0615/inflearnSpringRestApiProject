@@ -169,4 +169,14 @@ EventController 클래스
  public  class ErrorSerializer extends JsonSerializer<Errors>   // JsonSerializer 상속 받아 구현
  변환 과정 구현
   ---------------------------------------------------------------------------------------------
+16. Event 생성 API 구현: 비즈니스 로직 적용
+Event 도메인에 update() 메소드 추가
+EventTest 클래스에 testFree() ,testOffline() 테스트 메소드 추가
+
+EventControllerTests 클래스
+@TestDescription("정상적인 입력 테스트")
+public void createEvent(){} 메소드에 offline, free 검사 코드 추가
+
+  ---------------------------------------------------------------------------------------------
+
 
