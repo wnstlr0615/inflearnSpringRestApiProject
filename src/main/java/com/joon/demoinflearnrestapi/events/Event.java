@@ -1,6 +1,7 @@
 package com.joon.demoinflearnrestapi.events;
 
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter @Setter @EqualsAndHashCode(of="id") //값 비교시 id hash 값 사용
 @Entity
 // @Data 사용시 @EqualsAndHashCode 에서 모든 프로퍼티를 자동 사용하므로 문제 생길 수도 있음
-public class Event {
+public class Event extends RepresentationModel<Event> {
     @Id
     @GeneratedValue
     private Integer id;

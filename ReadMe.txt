@@ -201,6 +201,61 @@ public void createEvent(){} 메소드에 offline, free 검사 코드 추가
             다음과 같은 방법 사용
 
     testOffline 메소드와 이와 같음
-      ---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+19. 스프링 HATEOAS 적용
+ResourceSupport is now RepresentationModel
+Resource is now EntityModel
+Resources is now CollectionModel
+PagedResources is now PagedModel
+
+EventControllertests 클래스
+createEvent()메소드
+.andExpect(jsonPath("_links.self").exists())
+.andExpect(jsonPath("_links.query-events").exists())
+.andExpect(jsonPath("_links.update-event").exists())
+Spring HATEOAS 를 통한 링크 검출 확인
+
+클래스 생성 //HATEOAS 를 사용하기 위해 클래스 생성
+class EventResource extends EntityModel<Event> { //1번 방법
+    public EventResource(Event event, Link... links) {
+        super(event, links);
+    }
+}
+
+class EventResource extends RepresentationModel<Event> { //2번 방법
+    @JsonUnwrapped // 객체를 풀어서 json로 바꿔줌
+    Event event;
+    public EventResource(Event event){
+        this.event=event;
+    }
+    public Event getEvent() {
+        return event;
+    }
+}
+---------------------------------------------------------------------------------------------
+21. 스프링 REST Docs 적용
+RestApi를 REST Docs를 이용하여 문서화 하기
+테스트 클래스에
+@AutoConfigureRestDocs 추가 후
+mvc에 테스트 코드로 .andDo(document("create-event")) 입력 시 REST Docs으로 Docs생성
+
+Target에 .adoc 형태에 문서 생성
+내용에 응답이 한줄로 나오기 때문에 fommater를 이용하여 깔끔하게 변환 작업
+
+@TestConfiguration
+public class RestDocsConfiguration {
+    @Bean
+    public RestDocsMockMvcConfigurationCustomizer restDocsMockMvcBuilderCustomizer(){
+        return configurer -> configurer.operationPreprocessors()
+                    .withRequestDefaults(prettyPrint())  //requet 깔끔하게 정리
+                    .withResponseDefaults(prettyPrint());  //response 깔끔하게 정리
+    }
+}
+
+eventControllerTests에
+@AutoConfigureRestDocs
+@Import(RestDocsConfiguration.class)
+추가
+---------------------------------------------------------------------------------------------
 
 
