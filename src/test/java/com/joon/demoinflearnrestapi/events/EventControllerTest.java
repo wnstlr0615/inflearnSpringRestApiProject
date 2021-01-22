@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
@@ -201,13 +202,37 @@ public class EventControllerTest {
                 .andDo(document("query-event"))
         ;
     }
+    @Test
+    @TestDescription("기존의 이벤트를 하나 조회하기")
+    public void getEvent() throws Exception {
+        Event event = generateEvent(100);
+        mvc.perform(get("/api/events/{id}", event.getId())  //@PathVariable 처럼 입력 방법
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").exists())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andDo(document("get-an-event"))
+            ;
 
-    private void generateEvent(int index) {
+    }
+
+    @Test
+    @TestDescription("없는 이벤트는 조회했을 때 404 응답 받기")
+    public void getEvent404() throws Exception {
+        mvc.perform(get("/api/events/1531315")
+        )
+                .andExpect(status().isNotFound())
+        ;
+
+    }
+    private Event generateEvent(int index) {
         Event event=Event.builder()
                 .name("event"+index)
                 .description("test event")
                 .build();
-        this.eventRepository.save(event);
+        return this.eventRepository.save(event);
     }
 }
 
