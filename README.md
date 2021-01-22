@@ -311,4 +311,31 @@ Test에 application설정 사용하는 방법
 application-test.properties 생성 // application으로 설정 할 경우 main에도 덮어 씌워지기 때문에 -test를 붙여 설정
  application-test.properties 생성 후 사용테스트 클래스에  @ActiveProfiles("test") 붙여서 사용
  ---------------------------------------------------------------------------------------------
+#25. 인덱스 핸들러 만들기 
+기본 페이지로 index 페이지 생성( IndexController 클래스 생성)
+잘못 입력하여 에러가 발생하였을경우 index로 돌아가는 link추가
 
+잘못된 입력으로 인해서 에러를 반환할 때 에러만 반환해준 곳에 index로 돌아가는 링크도 추가 되도록 구현
+
+ return ResponseEntity.badRequest().body(errors); ->badRequest(errors);
+ 
+ 메소드로 패키징
+ private ResponseEntity<ErrorsResource> badRequest(Errors errors) {
+         return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+     }
+     
+  Error에 index 링크를 넣기 위해서 ErrorsResoure 클래스 생성
+  
+  public class ErrorsResource extends EntityModel<Errors> {
+      public ErrorsResource(Errors content, Link... links){
+          super(content, links);
+          add(linkTo(methodOn(IndexController.class).index()).withRel("index"));
+      }
+  }
+  
+  스프링부트 2.3부터  jackson 라이브러리가 Array를 만드는 것을 허용하지 않으므로
+  
+  ErrorSerializer 클래스에
+jsonGenerator.writeFieldName("errors");추가
+   
+---------------------------------------------------------------------------------------------
