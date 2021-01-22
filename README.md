@@ -361,3 +361,27 @@ public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler ass
 @Test
 @TestDescription("30개의 이벤트를 10개씩 두번쨰 페이지 조회하기")
 public void queryEvents() {} 테스트 추가
+---------------------------------------------------------------------------------------------
+#27. Event 조회 API 
+@Test
+@TestDescription("기존의 이벤트를 하나 조회하기")
+public void getEvent() 
+
+@Test
+@TestDescription("없는 이벤트는 조회했을 때 404 응답 받기")
+public void getEvent404()
+
+테스트 코드 추가
+
+ @GetMapping("{id}")
+public ResponseEntity getEvent(@PathVariable Integer id){}
+ EventController 에 조회 API 추가
+---------------------------------------------------------------------------------------------
+#28. Events 수정 API 
+
+event 수정 테스트 메소드 4개 추가
+@PutMapping("{id}")
+    public ResponseEntity updateEvent(@PathVariable Integer id, 
+    @RequestBody @Valid EventDto eventDto, Errors errors)
+    수정하기 api 추가
+---------------------------------------------------------------------------------------------

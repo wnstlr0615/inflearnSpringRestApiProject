@@ -5,6 +5,7 @@ import com.joon.demoinflearnrestapi.common.RestDocsConfiguration;
 import com.joon.demoinflearnrestapi.common.TestDescription;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
@@ -26,8 +26,7 @@ import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.li
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,6 +42,8 @@ public class EventControllerTest {
     MockMvc mvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    ModelMapper modelMapper;
     @Autowired
     private EventRepository eventRepository;
 
@@ -221,16 +222,79 @@ public class EventControllerTest {
     @Test
     @TestDescription("없는 이벤트는 조회했을 때 404 응답 받기")
     public void getEvent404() throws Exception {
-        mvc.perform(get("/api/events/1531315")
-        )
-                .andExpect(status().isNotFound())
-        ;
+        mvc.perform(get("/api/events/1531315"))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    @TestDescription("이벤트를 정상적으로 수정하기")
+    public void updateEvent() throws Exception {
+        Event event=generateEvent(100);
+        EventDto eventDto=modelMapper.map(event, EventDto.class);
+        String eventName = "Update Event";
+        eventDto.setName(eventName);
 
+        mvc.perform(put("/api/events/{id}", event.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsBytes(eventDto))
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(eventName))
+                .andExpect(jsonPath("_links.self").exists())
+        ;
+    }
+    @Test
+    @TestDescription("입력 값이 잘못된 경우에 이벤트 수정 실패")
+    public void updateEvent400_Wrong() throws Exception {
+        Event event=generateEvent(100);
+        EventDto eventDto=modelMapper.map(event, EventDto.class);
+        eventDto.setBasePrice(20000);
+        eventDto.setMaxPrice(1000);
+
+        mvc.perform(put("/api/events/{id}", event.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(eventDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    @TestDescription("입력 값이 비어있는 경우에 이벤트 수정 실패")
+    public void updateEvent400_Empty() throws Exception {
+        Event event=generateEvent(100);
+        EventDto eventDto=new EventDto();
+
+        mvc.perform(put("/api/events/{id}", event.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(eventDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    @TestDescription("존재하지 않는 이벤트 수정 실패")
+    public void updateEvent404() throws Exception {
+        Event event=generateEvent(100);
+        EventDto eventDto=modelMapper.map(event, EventDto.class);
+        mvc.perform(put("/api/events/{id}",123456)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(eventDto)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
     private Event generateEvent(int index) {
         Event event=Event.builder()
                 .name("event"+index)
                 .description("test event")
+                .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 25, 14, 21))
+                .closeEnrollmentDateTime(LocalDateTime.of(2018, 11, 24, 14, 21))
+                .beginEventDateTime(LocalDateTime.of(2018, 11, 26, 14, 21))
+                .endEventDateTime(LocalDateTime.of(2018, 11, 25, 14, 21))
+                .basePrice(10000)
+                .maxPrice(20000)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타텁 팩토리")
+                .offline(true)
+                .free(false)
+                .eventStatus(EventStatus.DRAFT)
                 .build();
         return this.eventRepository.save(event);
     }

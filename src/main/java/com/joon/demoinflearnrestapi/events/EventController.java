@@ -49,7 +49,23 @@ public class EventController {
         eventResource.add(new Link("/docs/index.html#resoureces-events-get").withRel("profile"));
         return ResponseEntity.ok(eventResource);
     }
+    @PutMapping("{id}")
+    public ResponseEntity updateEvent(@PathVariable Integer id, @RequestBody @Valid EventDto eventDto, Errors errors){
+        Optional<Event> findEvent = eventRepository.findById(id);
+        if(findEvent.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        if(errors.hasErrors()){return badRequest(errors);}
+        eventValidator.validate(eventDto,errors);
+        if(errors.hasErrors()){return badRequest(errors);}
+        Event existingEvent = findEvent.get();
+        modelMapper.map(eventDto, existingEvent);
+        Event savedEvent=eventRepository.save(existingEvent);
 
+        EventResource eventResource=new EventResource(savedEvent);
+        eventResource.add(new Link("/docs/index.html#resoureces-events-update").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors){
         if(errors.hasErrors()){//어노테이션 validation 검사
