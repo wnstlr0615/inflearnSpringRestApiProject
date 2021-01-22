@@ -385,3 +385,23 @@ event 수정 테스트 메소드 4개 추가
     @RequestBody @Valid EventDto eventDto, Errors errors)
     수정하기 api 추가
 ---------------------------------------------------------------------------------------------
+#29. 테스트 코드 리팩토링 
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@AutoConfigureRestDocs
+@Import(RestDocsConfiguration.class)
+@ActiveProfiles("test")
+@Ignore
+public class BaseControllerTest {
+    @Autowired
+    protected MockMvc mvc;
+    @Autowired
+    protected ObjectMapper objectMapper;
+    @Autowired
+    protected ModelMapper modelMapper;
+}
+
+BaseControllerTest를 만들어 상속함으로서 test 중복 속성제거
+@Ignore를 붙이면 테스트에서 제외됨

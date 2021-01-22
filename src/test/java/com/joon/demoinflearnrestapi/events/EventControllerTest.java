@@ -1,11 +1,10 @@
 package com.joon.demoinflearnrestapi.events;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joon.demoinflearnrestapi.common.BaseControllerTest;
 import com.joon.demoinflearnrestapi.common.RestDocsConfiguration;
 import com.joon.demoinflearnrestapi.common.TestDescription;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
@@ -37,13 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureRestDocs
 @Import(RestDocsConfiguration.class)
 @ActiveProfiles("test")
-public class EventControllerTest {
-    @Autowired
-    MockMvc mvc;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    ModelMapper modelMapper;
+public class EventControllerTest extends BaseControllerTest {
+
     @Autowired
     private EventRepository eventRepository;
 
@@ -64,7 +57,7 @@ public class EventControllerTest {
                 .build();
 
         mvc.perform(post("/api/events/")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)  //입력 기대 형태
+                        .contentType(MediaType.APPLICATION_JSON)  //입력 기대 형태
                         .accept(MediaTypes.HAL_JSON)
                         .content(objectMapper.writeValueAsBytes(eventDto)))  //출력 기대형태
                 .andDo(print())
@@ -139,7 +132,7 @@ public class EventControllerTest {
                 .build();
 
         mvc.perform(post("/api/events/")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)  //입력 기대 형태
+                .contentType(MediaType.APPLICATION_JSON)  //입력 기대 형태
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsBytes(event)))  //출력 기대형태
                 .andDo(print())
@@ -234,7 +227,7 @@ public class EventControllerTest {
         eventDto.setName(eventName);
 
         mvc.perform(put("/api/events/{id}", event.getId())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(eventDto))
         )
                 .andDo(print())
