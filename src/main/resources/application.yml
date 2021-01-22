@@ -1,4 +1,8 @@
+#springdatasource.url= jdbc:postgresql://localhost:5432/postgres
+#spring.datasource.username=postgres
+#spring.datasource.password= 3621
 spring:
-  jackson:
-    deserialization:
-      fail-on-unknown-properties:
+  datasource:
+   url: jdbc:postgresql://localhost:5432/postgres
+   username: postgres
+   password: 3621

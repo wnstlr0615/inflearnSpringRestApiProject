@@ -1,6 +1,6 @@
 인프런 스프링 RestApi 백기선님 강의
 
-8. Event 생성 API 구현: Event 도메인 구현
+##8. Event 생성 API 구현: Event 도메인 구현
 롬복 사용
 @Data 사용시 @EqualsAndHashCode 에서 모든 프로퍼티를 자동 사용하므로 문제 생길 수도 있음
 테스트 클래스 AssertJ 사용
@@ -12,7 +12,7 @@ isNotNull()  //Null이 아닌지 검사 메소드
 isEqualTo()  // 같은지 비교
 commit
 -------------------------------------------------------------------------------------
-9. Event 생성 API 구현: 테스트 만들자
+##9. Event 생성 API 구현: 테스트 만들자
 컨트롤러 테스트
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,7 +25,7 @@ mvc.perform(post("/api/events/")
                     .andExpect(status().isCreated());//201 테스트
 
 -------------------------------------------------------------------------------------
-10. Event 생성 API 구현: 201 응답 받기
+##10. Event 생성 API 구현: 201 응답 받기
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 EventController 클래스
 @RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_VALUE) //produces 출력 타입 설정
@@ -38,7 +38,7 @@ EventControllerTests 클래스
    .andExpect(jsonPath("id").exists()); // json에 id 가 있는지 확인
 
 -------------------------------------------------------------------------------------
-11. Event 생성 API 구현: EventRepository 구현
+##11. Event 생성 API 구현: EventRepository 구현
 public interface EventRepository  extends JpaRepository<Event, Integer>  //Repository 생성
    Event 클래스
     @Enumerated(EnumType.STRING) // 기본 값 EnumType.ORDINAL(숫자로 저장)
@@ -70,7 +70,7 @@ EventControllerTest 클래스
  HttpHeaders 클래스에 Header 값 상수로 저장되어 있음
 
 ---------------------------------------------------------------------------------------------
-12. Event 생성 API 구현: 입력값 제한하기
+##12. Event 생성 API 구현: 입력값 제한하기
 EventDto 생성
 
 DemoInflearnRestApiApplication 클래스
@@ -88,10 +88,9 @@ modelMapper 라이브러리 사용
 목객체 제거
 @WebMVcTest에 경우 가짜객체를 사용하여 디비를 사용하지 않지만
 @SpringBootTest에 경우 디비를 사용하여 실제로 테스트 함
-
  .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
 ---------------------------------------------------------------------------------------------
-13. Event 생성 API 구현: 입력값 이외에 에러 발생
+##13. Event 생성 API 구현: 입력값 이외에 에러 발생
 
 application.properties 추가
 spring.jackson.deserialization.fail-on-unknown-properties=true  // 객체 변환 시 객체 변수명 말고 다른 것이 있을 경우 에러 처리
@@ -99,7 +98,7 @@ spring.jackson.deserialization.fail-on-unknown-properties=true  // 객체 변환
  Bad_Request() 테스트 추가
 
 ---------------------------------------------------------------------------------------------
-14. Event 생성 API 구현: Bad Request 처리하기
+##14. Event 생성 API 구현: Bad Request 처리하기
 EventDto 생성을 통하여 잘못된 값 입력 방지(기존 Event 객체를 그대로 사용하여 필요 없는 값도 입력 될 수 있었음)
 createEvent_Bad_Request_Empty_Input() // @Valid 를 사용하여  빈객체 입력시 에러 처리
 
@@ -146,7 +145,7 @@ public void createEvent_Bad_Request_Wrong_Input() //잘못된 값이 들어오�
      String value();
  }
  ---------------------------------------------------------------------------------------------
-15. Event 생성 API 구현: Bad Request 응답 본문 만들기
+##15. Event 생성 API 구현: Bad Request 응답 본문 만들기
 
  @TestDescription("입력 값이 잘못된 경우 에러 발생 테스트")
     public void createEvent_Bad_Request_Wrong_Input(){}
@@ -169,7 +168,7 @@ EventController 클래스
  public  class ErrorSerializer extends JsonSerializer<Errors>   // JsonSerializer 상속 받아 구현
  변환 과정 구현
   ---------------------------------------------------------------------------------------------
-16. Event 생성 API 구현: 비즈니스 로직 적용
+#16. Event 생성 API 구현: 비즈니스 로직 적용
 Event 도메인에 update() 메소드 추가
 EventTest 클래스에 testFree() ,testOffline() 테스트 메소드 추가
 
@@ -177,7 +176,7 @@ EventControllerTests 클래스
 @TestDescription("정상적인 입력 테스트")
 public void createEvent(){} 메소드에 offline, free 검사 코드 추가
   ---------------------------------------------------------------------------------------------
-17. Event 생성 API 구현: 매개변수를 이용한 테스트
+##17. Event 생성 API 구현: 매개변수를 이용한 테스트
     반복된 테스트 코드를 줄이기 위해서 JUnitParams 라이브러리 사용
     EventTests 클래스
     @RunWith(JUnitParamsRunner.class)  //어노테이션 추가
@@ -202,7 +201,7 @@ public void createEvent(){} 메소드에 offline, free 검사 코드 추가
 
     testOffline 메소드와 이와 같음
 ---------------------------------------------------------------------------------------------
-19. 스프링 HATEOAS 적용
+##19. 스프링 HATEOAS 적용
 ResourceSupport is now RepresentationModel
 Resource is now EntityModel
 Resources is now CollectionModel
@@ -233,7 +232,7 @@ class EventResource extends RepresentationModel<Event> { //2번 방법
     }
 }
 ---------------------------------------------------------------------------------------------
-21. 스프링 REST Docs 적용
+##21. 스프링 REST Docs 적용
 RestApi를 REST Docs를 이용하여 문서화 하기
 테스트 클래스에
 @AutoConfigureRestDocs 추가 후
@@ -257,7 +256,7 @@ eventControllerTests에
 @Import(RestDocsConfiguration.class)
 추가
 ---------------------------------------------------------------------------------------------
-22. 스프링 REST Docs: 링크, (Req, Res) 필드와 헤더
+##22. 스프링 REST Docs: 링크, (Req, Res) 필드와 헤더
 (Req, Res) 필드와 헤더  문서 생성
 
 .andDo(document("create-event",
@@ -303,3 +302,13 @@ eventControllerTests에
                         )
                         ))
 ---------------------------------------------------------------------------------------------
+#24. PostgreSQL 적용 
+main에는 PostgreSql을 사용하도록 설정
+Test에는 H2를 사용하도록 설정
+
+Test에 application설정 사용하는 방법
+프로젝트 설정을 통해 Test디렉토리에 resource 폴더를 테스트 리소스 폴더로 지정
+application-test.properties 생성 // application으로 설정 할 경우 main에도 덮어 씌워지기 때문에 -test를 붙여 설정
+ application-test.properties 생성 후 사용테스트 클래스에  @ActiveProfiles("test") 붙여서 사용
+ ---------------------------------------------------------------------------------------------
+
