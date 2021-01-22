@@ -2,11 +2,17 @@ package com.joon.demoinflearnrestapi.events;
 
 import com.joon.demoinflearnrestapi.common.ErrorsResource;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +36,14 @@ public class EventController {
         this.eventValidator = eventValidator;
     }
 
+    @GetMapping
+    public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler assembler){
+        Page<Event> page = eventRepository.findAll(pageable);
+        PagedModel pagedModel = assembler.toModel(page, e->new EventResource((Event) e));
+        pagedModel.add(new Link("/docs/index.html#resoureces-events-list").withRel("profile"));
+        return ResponseEntity.ok(pagedModel);
+    }
+
     @PostMapping
     public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors){
         if(errors.hasErrors()){//어노테이션 validation 검사
@@ -47,11 +61,12 @@ public class EventController {
         URI createUri = selfLinkBuilder.toUri();
         EventResource eventResource = new EventResource(newEvent);
         eventResource.add(linkTo(EventController.class).withRel("query-events"));
-        eventResource.add(selfLinkBuilder.withSelfRel());
+       // eventResource.add(selfLinkBuilder.withSelfRel());
         eventResource.add(selfLinkBuilder.withRel("update-event"));
         return ResponseEntity.created(createUri).body(eventResource);
 
     }
+
 
     private ResponseEntity<ErrorsResource> badRequest(Errors errors) {
         return ResponseEntity.badRequest().body(new ErrorsResource(errors));

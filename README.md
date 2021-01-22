@@ -339,3 +339,25 @@ application-test.properties 생성 // application으로 설정 할 경우 main�
 jsonGenerator.writeFieldName("errors");추가
    
 ---------------------------------------------------------------------------------------------
+#26. Event 목록 조회 API 
+전체 Event 목록을 조회하는 API 생성
+
+public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler assembler){ 
+        Page<Event> page = eventRepository.findAll(pageable);
+        PagedModel pagedModel = assembler.toModel(page, e->new EventResource((Event) e));
+        pagedModel.add(new Link("/docs/index.html#resoureces-events-list").withRel("profile"));
+        return ResponseEntity.ok(pagedModel);
+    }
+    Pageable 클래스를 입력받아 페이징처리 파라미터로 page, size, sort 입력 받음
+    PagedResourcesAssembler 클래스를 통해 현재 위치에서 기본 적으로 제공하는 다음, 이전 링크 등 자동 생성
+    
+ PagedModel pagedModel = assembler.toModel(page
+                        , e->new EventResource((Event) e));
+                       입력받은 event를 EventResourece고 감싸줘서 자신의 self 링크가 있도록 추가
+  
+   pagedModel.add(new Link("/docs/index.html#resoureces-events-list").withRel("profile"));
+   doc 링크 추가
+                       
+@Test
+@TestDescription("30개의 이벤트를 10개씩 두번쨰 페이지 조회하기")
+public void queryEvents() {} 테스트 추가
