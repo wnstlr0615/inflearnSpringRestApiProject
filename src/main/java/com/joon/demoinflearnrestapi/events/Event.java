@@ -1,5 +1,6 @@
 package com.joon.demoinflearnrestapi.events;
 
+import com.joon.demoinflearnrestapi.Account.Account;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -28,7 +29,8 @@ public class Event extends RepresentationModel<Event> {
     private boolean free;
     @Enumerated(EnumType.STRING) // 기본 값 EnumType.ORDINAL(숫자로 저장)
     private EventStatus eventStatus=EventStatus.DRAFT;
-
+    @ManyToOne
+    private Account account;
     public void update(){
         free= basePrice == 0 && maxPrice == 0;
         offline= !location.isBlank() && location != null;

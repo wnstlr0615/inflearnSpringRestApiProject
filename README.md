@@ -405,3 +405,20 @@ public class BaseControllerTest {
 
 BaseControllerTest를 만들어 상속함으로서 test 중복 속성제거
 @Ignore를 붙이면 테스트에서 제외됨
+---------------------------------------------------------------------------------------------
+#30. Account 도메인 추가 
+시큐리티 설정을 위한 Account 도메인 추가
+
+public class Account {
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private String email;
+    private String password;
+    @ElementCollection(fetch = FetchType.EAGER) //값을 여러 개 가질 수 있다
+    @Enumerated(EnumType.STRING)
+    private Set<AccountRole> roles;
+}
+  @ElementCollection 여러 개의 값을 가질 경우 설정
+  Event 도메인에 연관관계설정
+  ---------------------------------------------------------------------------------------------
