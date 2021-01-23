@@ -422,3 +422,19 @@ public class Account {
   @ElementCollection 여러 개의 값을 가질 경우 설정
   Event 도메인에 연관관계설정
   ---------------------------------------------------------------------------------------------
+#31. 스프링 시큐리티 
+UserDetaileService를 구현하는 AccountService 생성
+loadUserByUsername 구현 
+
+public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+         Account account = accountRepository.findByEmail(username).orElseThrow(()->new UsernameNotFoundException(username));
+        return new User(account.getEmail(), account.getPassword(), authorities(account.getRoles()));
+    }
+    private Collection<? extends GrantedAuthority> authorities(Set<AccountRole> roles) {
+        return roles.stream().map(r-> new SimpleGrantedAuthority("ROLE_" + r.name())).collect(Collectors.toSet());
+    }
+    
+AccountServicestest 클래스 
+ public void findByUsername(){} 검증 테스트 구현
+---------------------------------------------------------------------------------------------
+
