@@ -23,12 +23,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {//기본 설�
     AccountService accountService;
     @Autowired
     PasswordEncoder passwordEncoder;
+
     @Bean
     public TokenStore tokenStore(){
         return new InMemoryTokenStore();
     }
-    @Bean
 
+    @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
@@ -52,15 +53,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {//기본 설�
                 .mvcMatchers("/docs/index.html").anonymous()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }*/
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.anonymous()
-                .and()
-                .formLogin()//폼인증 추가
-                .and()
-                .authorizeRequests()
-                    .mvcMatchers(HttpMethod.GET, "/api/**").authenticated() //로그인 사용자 get요청 가능하도록 설정
-                    .anyRequest().authenticated();
-    }
 }

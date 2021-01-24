@@ -1,4 +1,4 @@
-package com.joon.demoinflearnrestapi.common;
+package com.joon.demoinflearnrestapi.config;
 
 import com.joon.demoinflearnrestapi.Account.Account;
 import com.joon.demoinflearnrestapi.Account.AccountRole;

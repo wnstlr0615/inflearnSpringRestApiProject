@@ -476,5 +476,67 @@ SecurityConfig{
 }
 폼인증 추가 하여 Get 요청은 로그인사용자는 가능하도록 설정
 ---------------------------------------------------------------------------------------------
+35. 스프링 시큐리티 OAuth 2 설정: 인증 서버 설정 
+@Configuration
+@EnableAuthorizationServer
+public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    AccountService accountService;
+    @Autowired
+    TokenStore tokenStore;
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.passwordEncoder(passwordEncoder);
+    }
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        clients.inMemory()
+                    .withClient("myApp")
+                    .authorizedGrantTypes("password", "refresh_token")
+                    .scopes("read","write")
+                    .secret(this.passwordEncoder.encode("pass"))
+                    .accessTokenValiditySeconds(10*60)
+                    .refreshTokenValiditySeconds(6*10*60);
+    }
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints.authenticationManager(authenticationManager)
+                .userDetailsService(accountService)
+                .tokenStore(tokenStore);
+    }
+}
+AuthServerConfig 클래스를 생성하여 토큰 발급
+
+ @Test
+    @TestDescription("인증 토큰을 발급 받는 테스트")
+    public void getAuthToken() throws Exception {
+        String clientId="myApp";
+        String clientSecret="pass";
+        String username = "ryan1@kakao.com";
+        String password = "joon";
+        Account  account=Account.builder()
+                .email(username)
+                .password(password)
+                .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+                .build();
+        accountService.saveAcount(account);
+        mvc.perform(post("/oauth/token")
+                    .with(httpBasic(clientId,clientSecret))
+                    .param("username",username)
+                    .param("password", password)
+                    .param("grant_type", "password"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("access_token").exists());
+    }
+    
+ 테스트 코드 작성
+ ---------------------------------------------------------------------------------------------
+
+
 
 
