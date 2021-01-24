@@ -437,4 +437,44 @@ public UserDetails loadUserByUsername(String username) throws UsernameNotFoundEx
 AccountServicestest 클래스 
  public void findByUsername(){} 검증 테스트 구현
 ---------------------------------------------------------------------------------------------
+#32. 예외 테스트 
+ public void findByUserNameFail(){} 
+ 유저를 찾지 못햇을 경우 발생하는 에러테스트
+ 에러 잡는 3가지 방법(강의 참조) 
+---------------------------------------------------------------------------------------------
+#33. 스프링 시큐리티 기본 설정 
+SecurityConfig 클래스를 생성하여 
+public void configure(WebSecurity web) 를 구현하여 사용자 접근 설정
+ @Override
+protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(accountService)
+        .passwordEncoder(passwordEncoder);
+} //사용 설정
+---------------------------------------------------------------------------------------------
+#34. 스프링 시큐리티 폼 인증 설정 
+public class AccountService implements UserDetailsService{
+      @Autowired
+        PasswordEncoder passwordEncoder;
+        public Account saveAcount(Account account){
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+            return accountRepository.save(account);
+        }
+}
+PasswordEncoder를 이용하여 비밀번호 암호화 작업 및 테스트도 암호화로 테스트 
+
+SecurityConfig{
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.anonymous()
+                .and()
+                .formLogin()
+                .and()
+                .authorizeRequests()
+                    .mvcMatchers(HttpMethod.GET, "/api/**").authenticated()
+                    .anyRequest().authenticated();
+    }
+}
+폼인증 추가 하여 Get 요청은 로그인사용자는 가능하도록 설정
+---------------------------------------------------------------------------------------------
+
 
